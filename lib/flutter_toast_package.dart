@@ -22,7 +22,7 @@ class FlutterToast {
   static Timer _timer;
   static Timer _timer2;
 
-  static toast(BuildContext context, String message, {duration = LENGTH_SHORT}) async {
+  static toast(BuildContext context, String message, {duration = LENGTH_SHORT}) {
     assert(duration > _dimissAnimalTime, "toast 消失的动画时间为$_dimissAnimalTime，设置的显示时间必须大于该时间");
 
     _message = message;
@@ -37,19 +37,19 @@ class FlutterToast {
       // 重新绘制UI，类似setState
       _overlayEntry.markNeedsBuild();
     } else {
-      _showing = true;
       _overlayState.insert(_overlayEntry);
+      _showing = true;
     }
 
     _timer?.cancel();
     _timer2?.cancel();
 
     _timer = Timer(Duration(milliseconds: _duration - _dimissAnimalTime), () {
-      _showing = false;
       _overlayEntry.markNeedsBuild();
 
       _timer2 = Timer(Duration(milliseconds: _dimissAnimalTime), () {
         _overlayEntry.remove();
+        _showing = false;
       });
     });
   }
