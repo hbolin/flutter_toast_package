@@ -59,14 +59,6 @@ class FlutterToast {
     });
   }
 
-  static setBackgroundColor(Color backgroundColor) {
-    _backgroundColor = backgroundColor;
-  }
-
-  static setTextColor(Color textColor) {
-    _textColor = textColor;
-  }
-
   // toast位置和动画的设置
   static Widget _build(BuildContext context) {
     return Positioned(
