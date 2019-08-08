@@ -21,12 +21,17 @@ class FlutterToast {
   static OverlayEntry _overlayEntry;
   static Timer _timer;
   static Timer _timer2;
+  static Color _backgroundColor;
+  static Color _textColor;
 
-  static toast(BuildContext context, String message, {duration = LENGTH_SHORT}) {
+  static toast(BuildContext context, String message,
+      {duration = LENGTH_SHORT, Color backgroundColor, Color textColor}) {
     assert(duration > _dimissAnimalTime, "toast 消失的动画时间为$_dimissAnimalTime，设置的显示时间必须大于该时间");
 
     _message = message;
     _duration = duration;
+    _backgroundColor = backgroundColor;
+    _textColor = textColor;
     _overlayState = Overlay.of(context);
 
     if (_overlayEntry == null) {
@@ -54,6 +59,14 @@ class FlutterToast {
     });
   }
 
+  static setBackgroundColor(Color backgroundColor) {
+    _backgroundColor = backgroundColor;
+  }
+
+  static setTextColor(Color textColor) {
+    _textColor = textColor;
+  }
+
   // toast位置和动画的设置
   static Widget _build(BuildContext context) {
     return Positioned(
@@ -78,14 +91,14 @@ class FlutterToast {
   static Widget _buildToastWidget() {
     return Center(
       child: Card(
-        color: Colors.black.withOpacity(0.5),
+        color: _backgroundColor ?? Colors.black.withOpacity(0.5),
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
           child: Text(
             _message,
             style: TextStyle(
               fontSize: 14.0,
-              color: Colors.white,
+              color: _textColor ?? Colors.white,
             ),
           ),
         ),
