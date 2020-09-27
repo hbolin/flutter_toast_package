@@ -4,6 +4,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+enum FlutterToastPosition {
+  TOP,
+  CENTER,
+  BOTTOM,
+}
+
 class FlutterToast {
   /// 参考于android的LENGTH_SHORT显示时长
   static const int LENGTH_SHORT = 2000;
@@ -12,85 +18,90 @@ class FlutterToast {
   static const int LENGTH_LONG = 3500;
 
   // toast消失的最短时间
-  static const int _dimissAnimalTime = 400;
+  static const int _dismissAnimalTime = 300;
 
-  static String _message;
-  static int _duration;
-  static bool _showing = false; // toast是否正在showing
-  static OverlayState _overlayState;
-  static OverlayEntry _overlayEntry;
-  static Timer _timer;
-  static Timer _timer2;
-  static Color _backgroundColor;
-  static Color _textColor;
+  // toast是否正在showing
+  bool _showing = false;
+  OverlayState _overlayState;
+  OverlayEntry _overlayEntry;
 
-  static toast(BuildContext context, String message,
-      {duration = LENGTH_SHORT, Color backgroundColor, Color textColor}) {
-    assert(duration > _dimissAnimalTime, "toast 消失的动画时间为$_dimissAnimalTime，设置的显示时间必须大于该时间");
+  void toast(BuildContext context, String message, {duration = LENGTH_SHORT, Color bgColor, Color textColor, FlutterToastPosition position = FlutterToastPosition.BOTTOM}) {
+    var toastWidget = _buildToastTextWidget(context, message, bgColor, textColor);
+    customToast(context, toastWidget, duration: duration, position: position);
+  }
 
-    _message = message;
-    _duration = duration;
-    _backgroundColor = backgroundColor;
-    _textColor = textColor;
+  void customToast(BuildContext context, Widget child, {duration = LENGTH_SHORT, FlutterToastPosition position = FlutterToastPosition.BOTTOM}) {
     _overlayState = Overlay.of(context);
 
-    if (_overlayEntry == null) {
-      _overlayEntry = OverlayEntry(builder: (BuildContext context) => _build(context));
-    }
-
-    if (_showing) {
-      // 重新绘制UI，类似setState
-      _overlayEntry.markNeedsBuild();
-    } else {
-      _overlayState.insert(_overlayEntry);
-      _showing = true;
-    }
-
-    _timer?.cancel();
-    _timer2?.cancel();
-
-    _timer = Timer(Duration(milliseconds: _duration - _dimissAnimalTime), () {
-      _overlayEntry.markNeedsBuild();
-
-      _timer2 = Timer(Duration(milliseconds: _dimissAnimalTime), () {
-        _overlayEntry.remove();
-        _showing = false;
-      });
+    _overlayEntry = OverlayEntry(builder: (BuildContext context) {
+      return _buildPositioned(context, child, position);
     });
+
+    _showing = false;
+    _overlayState.insert(_overlayEntry);
+
+    _dismissToast(duration);
+  }
+
+  void _dismissToast(int duration) async {
+    await Future.delayed(Duration(milliseconds: _dismissAnimalTime));
+    _showing = true;
+    _overlayEntry.markNeedsBuild();
+    await Future.delayed(Duration(milliseconds: duration));
+    _showing = false;
+    _overlayEntry.markNeedsBuild();
+    await Future.delayed(Duration(milliseconds: _dismissAnimalTime));
+    _overlayEntry.remove();
   }
 
   // toast位置和动画的设置
-  static Widget _build(BuildContext context) {
-    return Positioned(
-      // top值，可以改变这个值来改变toast在屏幕中的位置
-      top: MediaQuery.of(context).size.height * 4 / 5,
-      child: Container(
-        alignment: Alignment.center,
-        width: MediaQuery.of(context).size.width,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 80.0),
-          child: AnimatedOpacity(
-            opacity: _showing ? 1.0 : 0.0, // 目标透明度
-            duration: _showing ? Duration(milliseconds: 300) : Duration(milliseconds: _dimissAnimalTime),
-            child: _buildToastWidget(),
-          ),
-        ),
+  Widget _buildPositioned(BuildContext context, Widget toastWidget, FlutterToastPosition position) {
+    var child = Container(
+      width: MediaQuery.of(context).size.width,
+      padding: EdgeInsets.symmetric(horizontal: 80.0),
+      child: AnimatedOpacity(
+        opacity: _showing ? 1.0 : 0.0,
+        duration: Duration(milliseconds: _dismissAnimalTime),
+        child: toastWidget,
       ),
     );
+
+    Widget positionWidget;
+    switch (position) {
+      case FlutterToastPosition.TOP:
+        positionWidget = Positioned(
+          top: MediaQuery.of(context).size.height * 1 / 5,
+          child: Material(color: Colors.transparent, child: child),
+        );
+        break;
+      case FlutterToastPosition.CENTER:
+        positionWidget = Center(
+          child: Material(color: Colors.transparent, child: child),
+        );
+        break;
+      case FlutterToastPosition.BOTTOM:
+        positionWidget = Positioned(
+          bottom: MediaQuery.of(context).size.height * 1 / 5,
+          child: Material(color: Colors.transparent, child: child),
+        );
+        break;
+    }
+    return positionWidget;
   }
 
-  // toast绘制
-  static Widget _buildToastWidget() {
+  // toast text绘制
+  static Widget _buildToastTextWidget(BuildContext context, String message, Color bgColor, Color textColor) {
     return Center(
-      child: Card(
-        color: _backgroundColor ?? Colors.black.withOpacity(0.5),
+      child: Material(
+        borderRadius: BorderRadius.circular(6),
+        color: bgColor ?? Colors.black.withOpacity(0.8),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+          padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
           child: Text(
-            _message,
+            message,
             style: TextStyle(
-              fontSize: 14.0,
-              color: _textColor ?? Colors.white,
+              fontSize: Theme.of(context).textTheme.caption.fontSize,
+              color: textColor ?? Colors.white,
             ),
           ),
         ),
