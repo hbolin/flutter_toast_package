@@ -1,0 +1,6 @@
+package com.lightarrow.example
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity: FlutterActivity() {
+}
