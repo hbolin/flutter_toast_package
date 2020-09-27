@@ -1,3 +1,4 @@
+import 'package:example/flutter_toast_package.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -53,6 +54,14 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
   void _incrementCounter() {
+    debugPrint('显示toast');
+    FlutterToast().toast(context, '显示toast CENTER', position: FlutterToastPosition.CENTER);
+    FlutterToast().toast(context, '显示toast BOTTOM', position: FlutterToastPosition.BOTTOM);
+    FlutterToast().toast(context, '显示toast TOP', position: FlutterToastPosition.TOP);
+
+    FlutterToast().toast(context, '显示toast BOTTOM 6666', position: FlutterToastPosition.BOTTOM);
+    FlutterToast().customToast(context, Text('hello world',style: TextStyle(color: Colors.red)),position: FlutterToastPosition.TOP);
+
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
