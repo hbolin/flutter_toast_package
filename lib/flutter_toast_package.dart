@@ -92,17 +92,13 @@ class FlutterToast {
   // toast text绘制
   static Widget _buildToastTextWidget(BuildContext context, String message, Color bgColor, Color textColor) {
     return Center(
-      child: Material(
-        borderRadius: BorderRadius.circular(6),
-        color: bgColor ?? Colors.black.withOpacity(0.8),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
-          child: Text(
-            message,
-            style: TextStyle(
-              fontSize: Theme.of(context).textTheme.caption.fontSize,
-              color: textColor ?? Colors.white,
-            ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+        child: Text(
+          message,
+          style: TextStyle(
+            fontSize: Theme.of(context).textTheme.caption.fontSize,
+            color: textColor ?? Colors.white,
           ),
         ),
       ),
