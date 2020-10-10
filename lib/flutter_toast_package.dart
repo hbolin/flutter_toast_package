@@ -44,7 +44,7 @@ class FlutterToast {
   }
 
   void _dismissToast(int duration) async {
-    await Future.delayed(Duration(milliseconds: _dismissAnimalTime));
+    await Future.delayed(Duration(milliseconds: 100));
     _showing = true;
     _overlayEntry.markNeedsBuild();
     await Future.delayed(Duration(milliseconds: duration));
@@ -56,44 +56,54 @@ class FlutterToast {
 
   // toast位置和动画的设置
   Widget _buildPositioned(BuildContext context, Widget toastWidget, FlutterToastPosition position) {
-    var child = Container(
-      width: MediaQuery.of(context).size.width,
-      padding: EdgeInsets.symmetric(horizontal: 80.0),
-      child: AnimatedOpacity(
-        opacity: _showing ? 1.0 : 0.0,
-        duration: Duration(milliseconds: _dismissAnimalTime),
-        child: toastWidget,
-      ),
+    var child = AnimatedOpacity(
+      opacity: _showing ? 1.0 : 0.0,
+      duration: Duration(milliseconds: _dismissAnimalTime),
+      child: toastWidget,
     );
 
-    Widget positionWidget;
     switch (position) {
       case FlutterToastPosition.TOP:
-        positionWidget = Positioned(
-          top: MediaQuery.of(context).size.height * 1 / 5,
-          child: Material(color: Colors.transparent, child: child),
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 1 / 10),
+              child: child,
+            )
+          ],
         );
-        break;
       case FlutterToastPosition.CENTER:
-        positionWidget = Center(
-          child: Material(color: Colors.transparent, child: child),
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            child,
+          ],
         );
-        break;
       case FlutterToastPosition.BOTTOM:
-        positionWidget = Positioned(
-          bottom: MediaQuery.of(context).size.height * 1 / 5,
-          child: Material(color: Colors.transparent, child: child),
+      default:
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 1 / 10),
+              child: child,
+            )
+          ],
         );
-        break;
     }
-    return positionWidget;
   }
 
   // toast text绘制
   static Widget _buildToastTextWidget(BuildContext context, String message, Color bgColor, Color textColor) {
-    return Center(
+    return Material(
+      borderRadius: BorderRadius.circular(8),
+      color: bgColor ?? Colors.black.withOpacity(0.8),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+        padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         child: Text(
           message,
           style: TextStyle(

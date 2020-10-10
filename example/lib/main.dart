@@ -55,12 +55,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _incrementCounter() {
     debugPrint('显示toast');
+    showToast('hello', context);
     FlutterToast().toast(context, '显示toast CENTER', position: FlutterToastPosition.CENTER);
     FlutterToast().toast(context, '显示toast BOTTOM', position: FlutterToastPosition.BOTTOM);
     FlutterToast().toast(context, '显示toast TOP', position: FlutterToastPosition.TOP);
 
-    FlutterToast().toast(context, '显示toast BOTTOM 6666', position: FlutterToastPosition.BOTTOM);
-    FlutterToast().customToast(context, Text('hello world',style: TextStyle(color: Colors.red)),position: FlutterToastPosition.TOP);
+    FlutterToast().toast(context, '显示toast BOTTOM 6666', position: FlutterToastPosition.BOTTOM, bgColor: Colors.red, textColor: Colors.green);
+    FlutterToast().customToast(context, Text('hello world', style: TextStyle(color: Colors.red)), position: FlutterToastPosition.TOP);
 
     setState(() {
       // This call to setState tells the Flutter framework that something has
@@ -122,5 +123,41 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  ///显示toast
+  static void showToast(String msg, BuildContext context) {
+    if (context != null) {
+      OverlayEntry overlayEntry = OverlayEntry(
+          builder: (BuildContext context) => Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.all(18),
+                    decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(8)), color: Color(0xffE0E0E0)),
+                    child: Text(
+                      msg,
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                        decoration: TextDecoration.none,
+                      ),
+                    ),
+                  ),
+                  Image.asset(
+                    'images/timg.jpeg',
+                    fit: BoxFit.contain,
+                    width: 200,
+                  )
+                ],
+              ));
+      Overlay.of(context).insert(overlayEntry);
+
+      ///显示toast  2秒自动消失
+      Future.delayed(Duration(seconds: 2), () {
+        overlayEntry.remove();
+      });
+    }
   }
 }
