@@ -64,35 +64,41 @@ class FlutterToast {
 
     switch (position) {
       case FlutterToastPosition.TOP:
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 1 / 10),
-              child: child,
-            )
-          ],
+        return IgnorePointer(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 1 / 10),
+                child: child,
+              )
+            ],
+          ),
         );
       case FlutterToastPosition.CENTER:
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            child,
-          ],
+        return IgnorePointer(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              child,
+            ],
+          ),
         );
       case FlutterToastPosition.BOTTOM:
       default:
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 1 / 10),
-              child: child,
-            )
-          ],
+        return IgnorePointer(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 1 / 10),
+                child: child,
+              )
+            ],
+          ),
         );
     }
   }
